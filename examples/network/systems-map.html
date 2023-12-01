@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Mapa de Sistemas</title>
+
+    <script
+      type="text/javascript"
+      src="../../standalone/umd/vis-network.min.js"
+    ></script>
+
+    <style type="text/css">
+      #mynetwork {
+        width: 1200px;
+        height: 800px;
+        border: 1px solid lightgray;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Mapa de Sistemas</p>
+
+    <div id="mynetwork"></div>
+
+    <script type="text/javascript">
+      // create an array with nodes
+      var nodeList = [
+        {
+          id: 1,
+          name: "SIC",
+          class: "System",
+          provider: "Desenvolvimento interno",
+          hosting: "On premises",
+          language: "Delphi",
+          category: "Legado Petrópolis",
+        },
+        {
+          id: 2,
+          name: "SAP ECC",
+          class: "System",
+          provider: "SAP",
+          hosting: "On premises",
+          language: "SAP ABAP",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 3,
+          name: "SAP PI",
+          class: "System",
+          provider: "SAP",
+          hosting: "On premises",
+          language: "SAP ABAP",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 4,
+          name: "SAP BW",
+          class: "System",
+          provider: "SAP",
+          hosting: "On premises",
+          language: "SAP ABAP",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 5,
+          name: "SAP APO",
+          class: "System",
+          provider: "SAP",
+          hosting: "On premises",
+          language: "SAP ABAP",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 6,
+          name: "SAP TM",
+          class: "System",
+          provider: "SAP",
+          hosting: "On premises",
+          language: "SAP ABAP + Web Dynpro",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 7,
+          name: "SAP GRC NFe",
+          class: "System",
+          provider: "SAP",
+          hosting: "On premises",
+          language: "SAP ABAP + Web Dynpro",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 10,
+          name: "BI Revendas",
+          class: "System",
+          provider: "Desenvolvimento interno",
+          hosting: "On premises",
+          category: "Legado Petrópolis",
+        },
+        {
+          id: 68,
+          name: "Guepardo",
+          class: "System",
+          provider: "NTT Data",
+          hosting: "On premises",
+          language: "ABAP",
+          category: "Sistemas SAP",
+        },
+        {
+          id: 109,
+          name: "SAP CPI",
+          class: "System",
+          provider: "SAP",
+          hosting: "Cloud",
+          category: "Nuvem",
+        },
+        {
+          id: 600,
+          name: "DB SIC",
+          class: "Database",
+          hosting: "On premises",
+          platform: "SQL Server",
+          version: "2008 R2",
+        },
+        {
+          id: 601,
+          name: "DB ECC",
+          class: "Database",
+          hosting: "On premises",
+          platform: "Oracle",
+          version: "12c (12.1.0.2)",
+        },
+        {
+          id: 605,
+          name: "DB TM",
+          class: "Database",
+          hosting: "On premises",
+          platform: "Oracle",
+          version: "11.2.0.3",
+        },
+      ];
+
+      // create an array with edges
+      var edgeList = [
+        {
+          from: 1,
+          to: 10,
+          class: "data_exchange",
+          direction: "uni",
+          protocol: "ODBC",
+        },
+        {
+          from: 1,
+          to: 600,
+          class: "data_storage",
+          direction: "uni",
+        },
+        {
+          from: 2,
+          to: 3,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 4,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 5,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 5,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "CIF",
+        },
+        {
+          from: 2,
+          to: 6,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 6,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "CIF",
+        },
+        {
+          from: 2,
+          to: 7,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 68,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 109,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "RFC",
+        },
+        {
+          from: 2,
+          to: 601,
+          class: "data_storage",
+          direction: "uni",
+        },
+        {
+          from: 6,
+          to: 605,
+          class: "data_storage",
+          direction: "uni",
+        },
+        {
+          from: 7,
+          to: 606,
+          class: "data_storage",
+          direction: "uni",
+        },
+        {
+          from: 10,
+          to: 109,
+          class: "data_exchange",
+          direction: "bi",
+          protocol: "HTTP",
+        },
+      ];
+
+      nodeList = nodeList.map((node) => {
+        node = node;
+        node.label = node.name;
+        node.shape = node.class === "System" ? "box" : "database";
+        if (node.class === "System") {
+          node.widthConstraint = { minimum: 100 };
+          node.heightConstraint = { minimum: 30 };
+        }
+
+        switch (node.category) {
+          case "Legado Petrópolis":
+            node.color = "green";
+            break;
+
+          case "Nuvem":
+            node.color = "gray";
+            break;
+
+          default:
+            break;
+        }
+
+        switch (node.platform) {
+          case "Oracle":
+            node.color = "red";
+            break;
+
+          default:
+            break;
+        }
+
+        const numEdges = edgeList.reduce((accum, edge) => {
+          const relationBelongsToNode =
+            edge.from === node.id || edge.to === node.id ? 1 : 0;
+          return accum + relationBelongsToNode;
+        }, 0);
+        node.font = { size: 14 + numEdges };
+
+        return node;
+      });
+      var nodes = new vis.DataSet(nodeList);
+
+      edgeList = edgeList.map((edge) => {
+        edge = edge;
+        edge.arrows = edge.direction === "uni" ? "to" : "from, to";
+        switch (edge.protocol) {
+          case "RFC":
+            edge.color = "blue";
+            break;
+
+          case "CIF":
+            edge.color = "green";
+            edge.dashes = true;
+            break;
+
+          case "ODBC":
+            edge.color = "cyan";
+            edge.dashes = true;
+            break;
+
+          default:
+            edge.color = "black";
+            break;
+        }
+        return edge;
+      });
+      var edges = new vis.DataSet(edgeList);
+
+      // create a network
+      var container = document.getElementById("mynetwork");
+      var data = {
+        nodes: nodes,
+        edges: edges,
+      };
+      var options = {};
+      var network = new vis.Network(container, data, options);
+    </script>
+  </body>
+</html>
